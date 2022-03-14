@@ -3,7 +3,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import matplotlib.colors as cols
 import numpy as np
-import sys
 import webbrowser as web
 import pyperclip as cp
 
@@ -16,6 +15,7 @@ APP_INFO = 'assets/docs/APP_INFO.txt'
 GITHUB = 'https://www.github.com/DHANUSH-web'
 PROJECT_REPO = 'https://www.github.com/DHANUSH-web/PyCOL'
 FLATUI = 'https://www.flatuicolors.com/'
+
 
 class Ui_PyCOL(object):
     def setupUi(self, PyCOL):
@@ -217,11 +217,12 @@ class Ui_PyCOL(object):
         self.RSet.setValue(n[0])
         self.GSet.setValue(n[1])
         self.BSet.setValue(n[2])
-
+        
     # to get the slider values
     def getSlideValues(self):
         return [self.RSlide.value(), self.GSlide.value(), self.BSlide.value()]
 
+    # updates both color preview and spin boxes when slider are triggered
     def triggerSlide(self):
         s = self.getSlideValues()
         self.updateInputs(s)
@@ -233,24 +234,29 @@ class Ui_PyCOL(object):
     def getInputValues(self):
         return [self.RSet.value(), self.GSet.value(), self.BSet.value()]
 
+    # return the hex value of given color values
     def getHexColor(self, c):
-        c = [n/255 for n in c]
+        c = np.array(c)/255
         _hex = cols.to_hex(c)
         return _hex.upper()
 
+    # return the color values from a hex color code
     def extractHexa(self, hex_color):
         c = cols.to_rgb(hex_color)
         c = np.array(np.array(c) * 255, np.int32)
         return c
 
+    # to store the hex value in buffer
     def copyHexCode(self):
-        hex_code = self.HexDisplay.text()
+        hex_code = self.getHexColor(self.getSlideValues())
         cp.copy(hex_code)
+        self.HexDisplay.setText(f"Copied {hex_code}")
 
+    # to display a Qt message window
     def showWindow(self, title, file):
         with open(file) as info:
             message = info.read().replace("*", '--')
-        window = QtWidgets.QMessageBox()
+        window = QtWidgets.QMessageBox(PyCOL)
 
         window.setInformativeText(message)
         window.setWindowTitle(title)
@@ -266,10 +272,12 @@ class Ui_PyCOL(object):
         window.setStandardButtons(QtWidgets.QMessageBox.Ok)
         window.exec_()
 
+    # to define the shortcut keys
     def setKeySeq(self, seq):
         hwnd = QtWidgets.QShortcut(QtGui.QKeySequence(seq), PyCOL)
         return hwnd
 
+    # to apply the custom color when a user enters a value or a hex code
     def applyColor(self):
         try:
             color = self.UserInput.document().toPlainText()
@@ -283,7 +291,8 @@ class Ui_PyCOL(object):
                     hex_color = color
 
                 else:
-                    color = [int(c) for c in str(color).split()]
+                    # color = [int(c) for c in str(color).split()]
+                    color = np.array(color.split(), dtype='i')
                     self.updateSlides(color)
                     self.updateInputs(color)
                     hex_color = self.getHexColor(color)
@@ -303,6 +312,7 @@ class Ui_PyCOL(object):
             self.showColor.setStyleSheet(f"background-color: {hex_color}")
             self.HexDisplay.setText(hex_color)
 
+    # to generate random colors
     def generateRandom(self):
         rn = np.random.randint(0, 256, 3)
 
@@ -312,6 +322,7 @@ class Ui_PyCOL(object):
         self.HexDisplay.setText(hex_color)
         self.showColor.setStyleSheet(f"background-color: {hex_color}")
 
+    # to open color-pallete to explore more colors and color picker tools
     def XPloreColors(self):
         color = QtWidgets.QColorDialog.getColor()
 
@@ -323,6 +334,7 @@ class Ui_PyCOL(object):
             self.showColor.setStyleSheet(f'background-color: {color}')
             self.HexDisplay.setText(color)
 
+    # to exit or close the application
     def exitPyCOL(self):
         close = QtWidgets.QMessageBox.question(PyCOL,
             "PyCOL", "Do you want to exit PyCOL?",
