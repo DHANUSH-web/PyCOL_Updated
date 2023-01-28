@@ -28,7 +28,7 @@ class Ui_PyCOL(object):
         PyCOL.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         # set font
         font = QtGui.QFont()
-        font.setFamily("Arial")
+        font.setFamily("jetbrains mono")
         font.setPointSize(12)
         PyCOL.setFont(font)
         # set icon
