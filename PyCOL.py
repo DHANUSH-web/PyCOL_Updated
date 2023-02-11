@@ -6,11 +6,23 @@ import numpy as np
 import sys
 import webbrowser as web
 import pyperclip as cp
+import os
+
+# Stack Overflow: https://stackoverflow.com/questions/31836104/pyinstaller-and-onefile-how-to-include-an-image-in-the-exe-file
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 
 # application files
-LICENSE = 'assets/docs/MITLIC.txt'
-APP_INFO = 'assets/docs/APP_INFO.txt'
+LICENSE = resource_path('assets/docs/MITLIC.txt')
+APP_INFO = resource_path('assets/docs/APP_INFO.txt')
 
 # Important URL
 GITHUB = 'https://www.github.com/DHANUSH-web'
@@ -24,16 +36,16 @@ class Ui_PyCOL(object):
         PyCOL.setWindowModality(QtCore.Qt.ApplicationModal)
         PyCOL.resize(355, 565)
         PyCOL.setMinimumSize(QtCore.QSize(355, 565))
-        PyCOL.setMaximumSize(QtCore.QSize(355, 565))
+        PyCOL.setMaximumWidth(355)
         PyCOL.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         # set font
         font = QtGui.QFont()
-        font.setFamily("jetbrains mono")
+        font.setFamily("Arial")
         font.setPointSize(12)
         PyCOL.setFont(font)
         # set icon
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("assets/docs/../icons/PyCOL.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(resource_path("assets/docs/../icons/PyCOL.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         PyCOL.setWindowIcon(icon)
         PyCOL.setWindowOpacity(1.0)
         self.centralwidget = QtWidgets.QWidget(PyCOL)
@@ -170,26 +182,26 @@ class Ui_PyCOL(object):
         self.statusbar = QtWidgets.QStatusBar(PyCOL)
         self.statusbar.setObjectName("statusbar")
         PyCOL.setStatusBar(self.statusbar)
-        self.flatUI_op = QtWidgets.QAction(QtGui.QIcon('assets/icons/flatui.png'), 'FaltUI Color', PyCOL)
+        self.flatUI_op = QtWidgets.QAction(QtGui.QIcon(resource_path('assets/icons/flatui.png')), 'FaltUI Color', PyCOL)
         self.flatUI_op.setShortcut('Ctrl+F')
         self.flatUI_op.triggered.connect(lambda: web.open(FLATUI))
         self.flatUI_op.setObjectName("flatUI_op")
-        self.RndColor = QtWidgets.QAction(QtGui.QIcon("assets/icons/random.png"), 'Random Color', PyCOL)
+        self.RndColor = QtWidgets.QAction(QtGui.QIcon(resource_path("assets/icons/random.png")), 'Random Color', PyCOL)
         self.RndColor.setStatusTip("Generate Random Color")
         self.RndColor.setShortcut('Ctrl+R')
         self.RndColor.triggered.connect(self.generateRandom)
         self.RndColor.setObjectName("RndColor")
-        self.PyDoc = QtWidgets.QAction(QtGui.QIcon('assets/icons/information.png'), 'MIT LICENSE', PyCOL)
+        self.PyDoc = QtWidgets.QAction(QtGui.QIcon(resource_path('assets/icons/information.png')), 'MIT LICENSE', PyCOL)
         self.PyDoc.setShortcut('Ctrl+J')
         self.PyDoc.triggered.connect(lambda: self.showWindow("PyCOL - License", LICENSE))
         self.PyDoc.setObjectName("PyDoc")
-        self.Dev = QtWidgets.QAction(QtGui.QIcon('assets/images/profile.jpg'), 'App Developer', PyCOL)
+        self.Dev = QtWidgets.QAction(QtGui.QIcon(resource_path('assets/images/profile.jpg')), 'App Developer', PyCOL)
         self.Dev.setShortcut('Ctrl+D')
         self.Dev.triggered.connect(lambda: web.open(GITHUB))
-        self.hotKey = QtWidgets.QAction(QtGui.QIcon('assets/icons/hotKey.png'), 'View HotKeys', PyCOL)
+        self.hotKey = QtWidgets.QAction(QtGui.QIcon(resource_path('assets/icons/hotKey.png')), 'View HotKeys', PyCOL)
         self.hotKey.setShortcut('Ctrl+S')
         self.hotKey.triggered.connect(lambda: self.showWindow("PyCOL - Hot Keys", 'assets/docs/keysh.txt'))
-        self.ExitApp = QtWidgets.QAction(QtGui.QIcon('assets/icons/exit.png'), 'Exit PyCOL', PyCOL)
+        self.ExitApp = QtWidgets.QAction(QtGui.QIcon(resource_path('assets/icons/exit.png')), 'Exit PyCOL', PyCOL)
         self.ExitApp.setShortcut('Ctrl+Q')
         self.ExitApp.triggered.connect(lambda: self.exitPyCOL())
         self.ExitApp.setObjectName("ExitApp")
@@ -259,7 +271,7 @@ class Ui_PyCOL(object):
             font-family: Arial;\
             font-weight: bold;')
         self.gitHub = QtWidgets.QPushButton("GitHub", window, clicked=lambda: web.open(PROJECT_REPO))
-        self.gitHub.setIcon(QtGui.QIcon('assets/icons/github.png'))
+        self.gitHub.setIcon(QtGui.QIcon(resource_path('assets/icons/github.png')))
         self.gitHub.setCursor(QtCore.Qt.PointingHandCursor)
         self.gitHub.setToolTip("Open Project in GitHub")
         self.gitHub.setGeometry(28, 728, 100, 35)
